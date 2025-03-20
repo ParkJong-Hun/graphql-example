@@ -11,12 +11,25 @@ const tweets = [
     },
 ];
 
+let users = [
+    {
+      id: "1",
+      firstName: "nico",
+      lastName: "las",
+    },
+    {
+      id: "2",
+      firstName: "Elon",
+      lastName: "Mask",
+    },
+];
+
 const typeDefs = gql`
     type User {
         id: ID!
-        username: String!
         firstname: String!
-        lastname: String
+        lastName: String!
+        fullName: String!
     }
 
     type Tweet {
@@ -26,6 +39,7 @@ const typeDefs = gql`
     }
 
     type Query {
+        allUsers: [User!]!
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
         ping: String!
@@ -48,6 +62,10 @@ const resolvers = {
         ping() {
             return "pong";
         },
+        allUsers() {
+            console.log("allUsers called!");
+            return users;
+        },
     },
     Mutation: {
         postTweet(_, {text, userId}) {
@@ -64,7 +82,12 @@ const resolvers = {
             tweets = tweets.filter(tweet => tweet.id !== id);
             return true;
         }
-    }
+    },
+    User: {
+        fullName({ firstName, lastName }) {
+          return `${firstName} ${lastName}`;
+        },
+    },
 };
 
 const server = new ApolloServer({typeDefs});
