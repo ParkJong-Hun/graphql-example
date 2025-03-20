@@ -33,7 +33,7 @@ const typeDefs = gql`
 
     type Mutation {
         postTweet(text: String!, userId: ID!): Tweet!
-        deleteTwwet(id: ID!): Boolean!
+        deleteTweet(id: ID!): Boolean!
     }
 `;
 
@@ -49,6 +49,22 @@ const resolvers = {
             return "pong";
         },
     },
+    Mutation: {
+        postTweet(_, {text, userId}) {
+            const newTweet = {
+                id: tweets.length + 1,
+                text,
+            };
+            tweets.push(newTweet);
+            return newTweet;
+        },
+        deleteTweet(_, {id}) {
+            const tweet = tweets.find((tweet) => tweet.id === id);
+            if (!tweet) return false;
+            tweets = tweets.filter(tweet => tweet.id !== id);
+            return true;
+        }
+    }
 };
 
 const server = new ApolloServer({typeDefs});
